@@ -976,38 +976,38 @@ body.cursor-ready .cursor-dot {
   .stat-tooltip.glow-glass {
     display: block !important;
     position: relative !important;
-    /* Fluye con el documento, empuja el resto abajo */
     top: auto !important;
     left: auto !important;
     transform: none !important;
     width: 100%;
-
-    /* Limpieza de estética (sin caja, sin bordes) */
     background: transparent !important;
     backdrop-filter: none !important;
     -webkit-backdrop-filter: none !important;
     box-shadow: none !important;
     border: none !important;
 
-    /* Animación de Acordeón Smart Animate (Oculto) */
+    /* Estado cerrado */
     max-height: 0;
     opacity: 0;
     overflow: hidden;
     padding: 0 !important;
     margin-top: 0;
     text-align: left;
-    transition: max-height 0.35s cubic-bezier(0.4, 0, 0.2, 1),
-      opacity 0.3s ease,
-      margin-top 0.3s ease;
+
+    /* Transición más pareja y equilibrada para abrir y cerrar */
+    transition: max-height 0.4s ease-in-out, opacity 0.3s ease-in-out,
+      margin-top 0.3s ease-in-out, padding-bottom 0.4s ease-in-out;
   }
 
   /* Estado Expandido del Acordeón */
   .stat-item.show-tooltip .stat-tooltip.glow-glass {
-    max-height: 250px;
+    /* Altura máxima ajustada a la realidad para evitar 'delay' en la animación */
+    max-height: 150px;
     opacity: 0.7;
-    /* Texto un poco más tenue para diferenciar del título */
     margin-top: 8px;
-    /* Pequeño aire respecto al número */
+
+    /* Este colchón inferior evita que la base de las letras se corte */
+    padding-bottom: 8px !important;
     pointer-events: auto;
   }
 
