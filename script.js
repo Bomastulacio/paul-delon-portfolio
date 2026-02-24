@@ -121,18 +121,31 @@ document.addEventListener('DOMContentLoaded', () => {
                 const isAlreadyExpanded = panel.classList.contains('is-expanded');
 
                 if (isAlreadyExpanded) {
-                    // Si ya estaba expandido, simplemente lo cerramos (Toggle OFF)
+                    // Cierre manual (Toggle OFF)
                     panel.classList.remove('is-expanded');
                     panel.classList.remove('active');
                     stopGallery(panel);
 
-                    // Limpiamos el estado global de los contenedores
+                    // Limpieza síncrona de estados de contenedor
                     document.querySelectorAll('[data-accordion]').forEach(acc => {
                         acc.classList.remove('has-active');
                     });
                     activePanel = null;
                 } else {
-                    // 1. APERTURA PRIORITARIA (Reservar espacio en el DOM)
+                    // 1. LIMPIEZA GLOBAL INMEDIATA (Cierra cualquier otro panel en el sitio)
+                    document.querySelectorAll('.accordion-panel').forEach(p => {
+                        p.classList.remove('is-expanded');
+                        p.classList.remove('active');
+                        stopGallery(p);
+                    });
+
+                    // Quitar estado activo de todos los contenedores de acordeón
+                    document.querySelectorAll('[data-accordion]').forEach(acc => {
+                        acc.classList.remove('has-active');
+                    });
+
+                    // 2. APERTURA SÍNCRONA
+                    // Resetear estados internos (imágenes/dots)
                     document.querySelectorAll('.gallery-img').forEach(img => img.classList.remove('active'));
                     document.querySelectorAll('.gallery-dot').forEach(d => d.classList.remove('active'));
 
@@ -141,36 +154,12 @@ document.addEventListener('DOMContentLoaded', () => {
                     if (imgs.length > 0) imgs[0].classList.add('active');
                     if (dots.length > 0) dots[0].classList.add('active');
 
+                    // Activar panel actual
                     panel.classList.add('is-expanded');
                     panel.classList.add('active');
                     accordion.classList.add('has-active');
                     startGallery(panel);
                     activePanel = panel;
-
-                    // 2. ESTABILIZACIÓN DE CÁMARA (Inmediata)
-                    setTimeout(() => {
-                        panel.scrollIntoView({
-                            behavior: 'smooth',
-                            block: 'center'
-                        });
-                    }, 10);
-
-                    // 3. CIERRE DIFERIDO DE LOS DEMÁS (El truco para evitar el salto)
-                    // Retrasamos el colapso de los paneles superiores 400ms para que la cámara llegue primero al nuevo destino.
-                    setTimeout(() => {
-                        document.querySelectorAll('.accordion-panel').forEach(p => {
-                            if (p !== panel) {
-                                p.classList.remove('is-expanded');
-                                p.classList.remove('active');
-                                stopGallery(p);
-                            }
-                        });
-                        document.querySelectorAll('[data-accordion]').forEach(acc => {
-                            if (!acc.contains(panel)) {
-                                acc.classList.remove('has-active');
-                            }
-                        });
-                    }, 400);
                 }
             });
         });
