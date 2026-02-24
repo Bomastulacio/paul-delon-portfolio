@@ -708,6 +708,33 @@ body.cursor-ready .cursor-dot {
   }
 }
 
+/* Alineación de Escritorio - Anclaje a la Izquierda */
+@media (min-width: 769px) {
+  .stat-tooltip.glow-glass {
+    left: 0 !important;
+    /* Anclado al borde izquierdo del ítem */
+    transform: translateY(15px) !important;
+    /* Solo desplazamiento vertical inicial */
+    text-align: left !important;
+    /* Mejor legibilidad de la lista */
+    min-width: 200px;
+    /* Un poco más de ancho para que respiren los nombres */
+    padding: 16px 20px !important;
+  }
+
+  /* Alineación del texto interno */
+  .stat-tooltip.glow-glass ul {
+    text-align: left !important;
+    align-items: flex-start !important;
+  }
+
+  /* Animación de entrada sin el translateX */
+  .stat-item:hover .stat-tooltip.glow-glass {
+    transform: translateY(0) !important;
+    /* Flota solo hacia arriba */
+  }
+}
+
 .stat-item.show-tooltip .stat-tooltip.glow-glass {
   opacity: 1;
   visibility: visible;
