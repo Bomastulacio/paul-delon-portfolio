@@ -107,24 +107,23 @@ document.addEventListener('DOMContentLoaded', () => {
             panel.appendChild(dotsEl);
         });
 
-        // --- MOBILE: TAP TO TOGGLE (ROBUST + TOUCHSTART) ---
+        // --- MOBILE: TAP TO TOGGLE (GLOBAL SYNC + SCROLL FRIENDLY) ---
         panels.forEach(panel => {
-            const handleInteraction = (e) => {
+            panel.addEventListener('click', (e) => {
                 if (!isMobile()) return;
 
-                // Stop propagation and prevent default to handle touch cleanly without delay
+                // Stop propagation to prevent document/parent conflicts
                 e.stopPropagation();
-                // Avoid secondary click event if touchstart was handled
-                if (e.type === 'touchstart') e.preventDefault();
 
                 // Don't toggle if clicking a CTA link (cta handles itself)
                 if (e.target.closest('.panel-cta')) return;
 
                 const isAlreadyExpanded = panel.classList.contains('is-expanded');
 
-                // 1. ABSOLUTE GLOBAL CLEANUP
-                // Close EVERY other panel and stop their galleries across ALL accordions
+                // 1. ABSOLUTE DOCUMENT-WIDE CLEANUP
+                // This ensures that panels in DIFFERENT sections also close.
                 document.querySelectorAll('.accordion-panel').forEach(p => {
+                    // Close everything else, or close THIS one if it was already expanded
                     if (p !== panel || isAlreadyExpanded) {
                         p.classList.remove('is-expanded');
                         p.classList.remove('active');
@@ -132,38 +131,34 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                 });
 
-                // Clear 'has-active' from ALL accordion containers
+                // Clear 'has-active' from ALL accordion containers in the site
                 document.querySelectorAll('[data-accordion]').forEach(acc => {
                     acc.classList.remove('has-active');
                 });
 
                 if (isAlreadyExpanded) {
-                    // Toggled OFF (handled by the cleanup loop above)
+                    // Closed it (already handled in the cleanup loop)
                     activePanel = null;
                 } else {
-                    // 2. FORCED INITIALIZATION: Activate first image
+                    // 2. ACTIVATE NEW PANEL
+                    // Reset all gallery states globally just to be safe
+                    document.querySelectorAll('.gallery-img').forEach(img => img.classList.remove('active'));
+                    document.querySelectorAll('.gallery-dot').forEach(d => d.classList.remove('active'));
+
+                    // Show first image/dot of this panel
                     const imgs = panel.querySelectorAll('.gallery-img');
                     const dots = panel.querySelectorAll('.gallery-dot');
-                    if (imgs.length > 0) {
-                        document.querySelectorAll('.gallery-img').forEach(img => img.classList.remove('active'));
-                        imgs[0].classList.add('active');
-                    }
-                    if (dots.length > 0) {
-                        document.querySelectorAll('.gallery-dot').forEach(d => d.classList.remove('active'));
-                        dots[0].classList.add('active');
-                    }
+                    if (imgs.length > 0) imgs[0].classList.add('active');
+                    if (dots.length > 0) dots[0].classList.add('active');
 
-                    // Expand this one
+                    // Expand and start
                     panel.classList.add('is-expanded');
                     panel.classList.add('active');
                     accordion.classList.add('has-active');
                     startGallery(panel);
                     activePanel = panel;
                 }
-            };
-
-            panel.addEventListener('click', handleInteraction);
-            panel.addEventListener('touchstart', handleInteraction, { passive: false });
+            });
         });
 
         // --- Desktop: gallery rotation on hover ---
