@@ -402,10 +402,10 @@ body.cursor-ready .cursor-dot {
 /* Gallery dots — centered, 8px circles */
 .gallery-dots {
   position: absolute;
-  bottom: 20px;
+  bottom: 25px;
   left: 50%;
   transform: translateX(-50%);
-  z-index: 8;
+  z-index: 20;
   display: flex;
   justify-content: center;
   gap: 8px;
@@ -431,49 +431,70 @@ body.cursor-ready .cursor-dot {
    HOVER / ACTIVE STATES
    ========================================================== */
 
-/* Desktop CSS hover */
-.accordion-hero:hover .accordion-panel {
-  flex: 0.5;
+/* Desktop CSS hover — Only for pointer devices */
+@media (hover: hover) {
+  .accordion-hero:hover .accordion-panel {
+    flex: 0.5;
+  }
+
+  .accordion-hero .accordion-panel:hover {
+    flex: 4;
+  }
+
+  .accordion-hero .accordion-panel:hover .panel-gallery {
+    filter: grayscale(0%) brightness(1) !important;
+  }
+
+  .accordion-hero .accordion-panel:hover .panel-overlay {
+    opacity: 0 !important;
+  }
+
+  .accordion-hero .accordion-panel:hover .panel-collapsed-label {
+    opacity: 0 !important;
+    transition: opacity 0.15s;
+  }
+
+  .accordion-hero .accordion-panel:hover .panel-content {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+  }
+
+  .accordion-hero .accordion-panel:hover .gallery-dots {
+    opacity: 1 !important;
+  }
+
+  .accordion-hero:hover .accordion-panel:not(:hover) .panel-gallery {
+    filter: grayscale(100%) brightness(0.10);
+  }
 }
 
-.accordion-hero .accordion-panel:hover {
-  flex: 4;
-}
-
-.accordion-hero .accordion-panel:hover .panel-gallery,
+/* Common Active/Expanded States (both desktop JS and mobile) */
 .accordion-panel.active .panel-gallery,
 .accordion-panel.is-expanded .panel-gallery {
   filter: grayscale(0%) brightness(1) !important;
 }
 
-.accordion-hero .accordion-panel:hover .panel-overlay,
 .accordion-panel.active .panel-overlay,
 .accordion-panel.is-expanded .panel-overlay {
   opacity: 0 !important;
 }
 
-.accordion-hero .accordion-panel:hover .panel-collapsed-label,
 .accordion-panel.active .panel-collapsed-label,
 .accordion-panel.is-expanded .panel-collapsed-label {
   opacity: 0 !important;
   transition: opacity 0.15s;
 }
 
-.accordion-hero .accordion-panel:hover .panel-content,
 .accordion-panel.active .panel-content {
   opacity: 1;
   transform: translateY(0);
   pointer-events: auto;
 }
 
-.accordion-hero .accordion-panel:hover .gallery-dots,
 .accordion-panel.active .gallery-dots,
 .accordion-panel.is-expanded .gallery-dots {
   opacity: 1 !important;
-}
-
-.accordion-hero:hover .accordion-panel:not(:hover) .panel-gallery {
-  filter: grayscale(100%) brightness(0.10);
 }
 
 /* JS .active mirrors hover */
@@ -915,7 +936,8 @@ body.cursor-ready .cursor-dot {
 
   .accordion-panel.is-expanded .gallery-dots {
     opacity: 1 !important;
-    bottom: calc(30% + 15px) !important;
+    bottom: calc(30% + 25px) !important;
+    z-index: 25 !important;
   }
 
   /* ---- MOBILE: column layout ---- */
@@ -925,24 +947,30 @@ body.cursor-ready .cursor-dot {
     min-height: 78vh;
     padding: 0 12px 12px;
     gap: 4px;
+    /* Prevent layout jumps */
+    overflow: hidden;
   }
 
   .accordion-panel {
-    flex: 1;
+    position: relative;
+    flex: 1 0 80px;
     min-height: 80px;
     border-radius: 10px;
     cursor: pointer;
+    overflow: hidden;
+    transition: flex 0.6s var(--ease), height 0.6s var(--ease);
   }
 
   /* Mobile JS .active = tap toggle */
   .accordion-hero.has-active .accordion-panel {
-    flex: 0.4;
+    flex: 0 0 44px;
     min-height: 44px;
   }
 
-  .accordion-panel.active {
-    flex: 5;
-    min-height: 240px;
+  .accordion-panel.active,
+  .accordion-panel.is-expanded {
+    flex: 0 0 calc(65vh + 0px) !important;
+    min-height: 480px !important;
   }
 
   .panel-vertical-title {

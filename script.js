@@ -107,12 +107,12 @@ document.addEventListener('DOMContentLoaded', () => {
             panel.appendChild(dotsEl);
         });
 
-        // --- MOBILE: TAP TO TOGGLE (REFINED) ---
+        // --- MOBILE: TAP TO TOGGLE (ROBUST) ---
         panels.forEach(panel => {
-            panel.addEventListener('click', (e) => {
+            const handleInteraction = (e) => {
                 if (!isMobile()) return;
 
-                // Stop propagation to prevent potential conflicts or multiple triggers
+                // Stop propagation and prevent default to handle touch cleanly
                 e.stopPropagation();
 
                 // Don't toggle if clicking a CTA link
@@ -121,29 +121,35 @@ document.addEventListener('DOMContentLoaded', () => {
                 const isAlreadyExpanded = panel.classList.contains('is-expanded');
 
                 // 1. ABSOLUTE GLOBAL CLEANUP
-                // Flush ALL gallery image states BEFORE doing anything else to prevent black screens
-                document.querySelectorAll('.gallery-img').forEach(img => img.classList.remove('active'));
-
-                // Stop ALL galleries globally (clears timers and resets internal state)
+                // Close EVERY other panel and stop their galleries
                 document.querySelectorAll('.accordion-panel').forEach(p => {
-                    p.classList.remove('is-expanded');
-                    p.classList.remove('active');
-                    stopGallery(p);
+                    if (p !== panel || isAlreadyExpanded) {
+                        p.classList.remove('is-expanded');
+                        p.classList.remove('active');
+                        stopGallery(p);
+                    }
                 });
 
-                // Clear state from all accordions
+                // Flush ALL gallery image states globally to prevent conflicts
+                document.querySelectorAll('.gallery-img').forEach(img => img.classList.remove('active'));
+
+                // Clear active state from all accordion containers
                 document.querySelectorAll('[data-accordion]').forEach(acc => {
                     acc.classList.remove('has-active');
                 });
 
                 if (isAlreadyExpanded) {
-                    // If it was already expanded, we just closed it (global cleanup above handled it)
+                    // If it was already expanded, we already closed it in the loop above
                     activePanel = null;
                 } else {
-                    // 2. FORCED INITIALIZATION: Activate first image IMMEDIATELY
+                    // 2. FORCED INITIALIZATION: Activate first image of THIS panel IMMEDIATELY
                     const imgs = panel.querySelectorAll('.gallery-img');
+                    const dots = panel.querySelectorAll('.gallery-dot');
                     if (imgs.length > 0) {
                         imgs[0].classList.add('active');
+                    }
+                    if (dots.length > 0) {
+                        dots[0].classList.add('active');
                     }
 
                     // Expand this one and start its gallery
@@ -153,7 +159,10 @@ document.addEventListener('DOMContentLoaded', () => {
                     startGallery(panel);
                     activePanel = panel;
                 }
-            });
+            };
+
+            panel.addEventListener('click', handleInteraction);
+            // Optional: panel.addEventListener('touchstart', handleInteraction, {passive: false});
         });
 
         // --- Desktop: gallery rotation on hover ---
