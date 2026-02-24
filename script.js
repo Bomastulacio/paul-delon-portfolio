@@ -118,48 +118,27 @@ document.addEventListener('DOMContentLoaded', () => {
                 // Don't toggle if clicking a CTA link (cta handles itself)
                 if (e.target.closest('.panel-cta')) return;
 
-                const isAlreadyExpanded = panel.classList.contains('is-expanded');
+                const wasExpanded = panel.classList.contains('is-expanded');
 
-                if (isAlreadyExpanded) {
-                    // Cierre manual (Toggle OFF)
-                    panel.classList.remove('is-expanded');
-                    panel.classList.remove('active');
-                    stopGallery(panel);
+                // 1. APAGAR TODO GLOBALMENTE SIEMPRE
+                document.querySelectorAll('.accordion-panel.is-expanded').forEach(p => {
+                    p.classList.remove('is-expanded', 'active');
+                    stopGallery(p);
+                });
+                document.querySelectorAll('.accordion-hero.has-active').forEach(acc => {
+                    acc.classList.remove('has-active');
+                });
 
-                    // Limpieza síncrona de estados de contenedor
-                    document.querySelectorAll('[data-accordion]').forEach(acc => {
-                        acc.classList.remove('has-active');
-                    });
-                    activePanel = null;
-                } else {
-                    // 1. LIMPIEZA GLOBAL INMEDIATA (Cierra cualquier otro panel en el sitio)
-                    document.querySelectorAll('.accordion-panel').forEach(p => {
-                        p.classList.remove('is-expanded');
-                        p.classList.remove('active');
-                        stopGallery(p);
-                    });
+                // 2. PRENDER EL NUEVO (Si no estaba abierto)
+                if (!wasExpanded) {
+                    panel.classList.add('is-expanded', 'active');
+                    const acc = panel.closest('[data-accordion]');
+                    if (acc) acc.classList.add('has-active');
 
-                    // Quitar estado activo de todos los contenedores de acordeón
-                    document.querySelectorAll('[data-accordion]').forEach(acc => {
-                        acc.classList.remove('has-active');
-                    });
-
-                    // 2. APERTURA SÍNCRONA
-                    // Resetear estados internos (imágenes/dots)
-                    document.querySelectorAll('.gallery-img').forEach(img => img.classList.remove('active'));
-                    document.querySelectorAll('.gallery-dot').forEach(d => d.classList.remove('active'));
-
-                    const imgs = panel.querySelectorAll('.gallery-img');
-                    const dots = panel.querySelectorAll('.gallery-dot');
-                    if (imgs.length > 0) imgs[0].classList.add('active');
-                    if (dots.length > 0) dots[0].classList.add('active');
-
-                    // Activar panel actual
-                    panel.classList.add('is-expanded');
-                    panel.classList.add('active');
-                    accordion.classList.add('has-active');
+                    // Forzar la primera imagen
+                    const firstImg = panel.querySelector('.gallery-img');
+                    if (firstImg) firstImg.classList.add('active');
                     startGallery(panel);
-                    activePanel = panel;
                 }
             });
         });
