@@ -157,6 +157,15 @@ document.addEventListener('DOMContentLoaded', () => {
                     accordion.classList.add('has-active');
                     startGallery(panel);
                     activePanel = panel;
+
+                    // --- UX Improvement: Scroll Stabilization ---
+                    // Delayed for 300ms to allow CSS expansion to begin
+                    setTimeout(() => {
+                        panel.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'center'
+                        });
+                    }, 300);
                 }
             });
         });
