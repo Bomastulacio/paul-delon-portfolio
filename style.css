@@ -214,6 +214,7 @@ body.cursor-ready .cursor-dot {
    ========================================================== */
 .accordion-section {
   padding-top: 24px;
+  transition: all 0.6s cubic-bezier(0.25, 1, 0.5, 1);
 }
 
 .accordion-section:first-of-type {
@@ -253,6 +254,7 @@ body.cursor-ready .cursor-dot {
   height: 75vh;
   padding: 0 16px 16px;
   gap: 5px;
+  transition: all 0.6s cubic-bezier(0.25, 1, 0.5, 1);
 }
 
 .accordion-panel {
@@ -432,7 +434,7 @@ body.cursor-ready .cursor-dot {
    ========================================================== */
 
 /* Desktop CSS hover — Only for pointer devices */
-@media (hover: hover) {
+@media (hover: hover) and (pointer: fine) {
   .accordion-hero:hover .accordion-panel {
     flex: 0.5;
   }
