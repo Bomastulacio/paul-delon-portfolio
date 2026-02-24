@@ -940,6 +940,66 @@ body.cursor-ready .cursor-dot {
 }
 
 @media (max-width: 768px) {
+
+  /* Ocultar SIEMPRE los tooltips flotantes originales en mobile */
+  .stat-tooltip.glow-glass {
+    display: none !important;
+  }
+
+  /* Estilos para el nuevo panel de expansión móvil */
+  .mobile-stats-panel {
+    margin-top: 20px;
+    width: 100%;
+    /* Reutilizamos la estética glass sutil */
+    background: rgba(15, 15, 15, 0.75);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+    border-radius: 12px;
+    padding: 0;
+    /* Sin padding hasta que tenga contenido */
+
+    /* Estado inicial: cerrado y oculto */
+    max-height: 0;
+    opacity: 0;
+    overflow: hidden;
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  /* Estado activo del panel */
+  .mobile-stats-panel.is-active {
+    max-height: 200px;
+    /* Altura suficiente para el contenido */
+    opacity: 1;
+    padding: 20px;
+    margin-bottom: 20px;
+  }
+
+  /* Estilos para la lista dentro del panel móvil */
+  .mobile-stats-panel ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    text-align: center;
+  }
+
+  .mobile-stats-panel li {
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.95);
+    font-weight: 400;
+  }
+
+  /* Feedback visual en el ítem seleccionado */
+  .stat-item.selected h3 {
+    color: #30d158;
+    /* Color de acento al estar activo */
+    transition: color 0.3s ease;
+  }
+
   body {
     cursor: auto;
   }

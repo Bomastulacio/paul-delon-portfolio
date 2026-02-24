@@ -312,23 +312,64 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // ========================================================
-    // ABOUT STATS TOOLTIPS (Mobile Touch)
+    // MOBILE STATS EXPANSION PANEL
     // ========================================================
     const statItems = document.querySelectorAll('.stat-item');
-    statItems.forEach(item => {
-        item.addEventListener('click', (e) => {
-            if (window.innerWidth <= 768) {
+    const mobilePanel = document.getElementById('mobile-stats-panel');
+    let activeStatIndex = -1;
+
+    if (statItems.length && mobilePanel) {
+        statItems.forEach((item, index) => {
+            item.addEventListener('click', (e) => {
+                if (window.innerWidth > 768) return; // Solo en mobile
+
                 e.stopPropagation();
-                statItems.forEach(other => {
-                    if (other !== item) other.classList.remove('show-tooltip');
-                });
-                item.classList.toggle('show-tooltip');
+
+                // Si tocamos el mismo que ya está abierto, lo cerramos
+                if (index === activeStatIndex) {
+                    closeMobilePanel();
+                } else {
+                    // Abrimos el nuevo
+                    openMobilePanel(item, index);
+                }
+            });
+        });
+
+        // Cerrar al tocar fuera del panel o de los items
+        document.addEventListener('click', (e) => {
+            if (window.innerWidth <= 768 && activeStatIndex !== -1) {
+                if (!mobilePanel.contains(e.target)) {
+                    closeMobilePanel();
+                }
             }
         });
-    });
+    }
 
-    document.addEventListener('click', () => {
-        statItems.forEach(item => item.classList.remove('show-tooltip'));
-    });
+    function openMobilePanel(selectedItem, index) {
+        // 1. Reset visual de los items
+        statItems.forEach(item => item.classList.remove('selected'));
+
+        // 2. Activar el item seleccionado
+        selectedItem.classList.add('selected');
+        activeStatIndex = index;
+
+        // 3. Obtener el contenido del tooltip oculto dentro del item
+        const tooltipUl = selectedItem.querySelector('.stat-tooltip ul');
+        const tooltipContent = tooltipUl ? tooltipUl.outerHTML : '';
+
+        // 4. Inyectar contenido en el panel móvil y abrirlo
+        mobilePanel.innerHTML = tooltipContent;
+        mobilePanel.classList.add('is-active');
+    }
+
+    function closeMobilePanel() {
+        statItems.forEach(item => item.classList.remove('selected'));
+        mobilePanel.classList.remove('is-active');
+        activeStatIndex = -1;
+        // Esperar a que termine la transición para limpiar el HTML (opcional)
+        setTimeout(() => {
+            if (activeStatIndex === -1) mobilePanel.innerHTML = '';
+        }, 400);
+    }
 
 });
