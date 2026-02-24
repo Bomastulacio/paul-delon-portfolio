@@ -428,6 +428,14 @@ body.cursor-ready .cursor-dot {
   background-color: #FFFFFF;
 }
 
+/* Ajuste estético de puntos SOLO para Desktop */
+@media (min-width: 769px) {
+  .accordion-panel .gallery-dots {
+    bottom: 50px !important;
+    z-index: 30 !important;
+  }
+}
+
 
 /* ==========================================================
    HOVER / ACTIVE STATES
