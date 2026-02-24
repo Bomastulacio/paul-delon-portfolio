@@ -681,9 +681,10 @@ body.cursor-ready .cursor-dot {
 }
 
 .stat-tooltip ul {
-  list-style: none;
-  padding: 0;
-  margin: 0;
+  list-style: none !important;
+  list-style-type: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
   display: flex;
   flex-direction: column;
   gap: 6px;
@@ -940,23 +941,30 @@ body.cursor-ready .cursor-dot {
 }
 
 @media (max-width: 768px) {
-
   /* Ocultar SIEMPRE los tooltips flotantes originales en mobile */
-  .stat-tooltip.glow-glass {
-    display: none !important;
+
+  /* Alinear todo estrictamente a la izquierda */
+  .about-stats {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 20px;
+    /* Separación entre cada bloque estadístico */
   }
 
   .stat-item {
+    width: 100%;
+    text-align: left;
+    /* Respeta la grilla izquierda */
     transition: all 0.3s ease;
     opacity: 0.7;
     /* Los no seleccionados se ven un poco más tenues */
   }
 
-  .stat-item.selected {
+  .stat-item.show-tooltip {
     opacity: 1;
-    /* El seleccionado brilla en blanco puro */
-    transform: scale(1.05);
-    /* Pequeño realce táctil */
+    transform: scale(1.02);
+    /* Sutil realce táctil */
   }
 
   .stat-item h3 {
@@ -964,49 +972,54 @@ body.cursor-ready .cursor-dot {
     transition: all 0.3s ease;
   }
 
-  /* Estilos para el nuevo panel de expansión móvil */
-  .mobile-stats-panel {
+  /* Anulamos el Glassmorphism y lo convertimos en un panel inline oculto */
+  .stat-tooltip.glow-glass {
+    display: block !important;
+    position: relative !important;
+    /* Fluye con el documento, empuja el resto abajo */
+    top: auto !important;
+    left: auto !important;
+    transform: none !important;
     width: 100%;
-    /* Reutilizamos la estética glass sutil */
-    background: rgba(15, 15, 15, 0.75);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
-    border-radius: 12px;
-    padding: 0 20px;
-    /* Padding horizontal fijo, vertical 0 */
 
-    /* Estado inicial: oculto y desplazado hacia arriba */
+    /* Limpieza de estética (sin caja, sin bordes) */
+    background: transparent !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    box-shadow: none !important;
+    border: none !important;
+
+    /* Animación de Acordeón Smart Animate (Oculto) */
     max-height: 0;
     opacity: 0;
     overflow: hidden;
-    transform: translateY(-15px);
-    /* Arranca un poco más arriba */
-    pointer-events: none;
+    padding: 0 !important;
     margin-top: 0;
-
-    /* Curva de animación idéntica al 'Ease Out' de Figma de 300ms */
-    transition: max-height 0.3s cubic-bezier(0.4, 0, 0.2, 1),
-      opacity 0.25s cubic-bezier(0.4, 0, 0.2, 1),
-      transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
-      padding 0.3s cubic-bezier(0.4, 0, 0.2, 1),
-      margin-top 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    text-align: left;
+    transition: max-height 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+      opacity 0.3s ease,
+      margin-top 0.3s ease;
   }
 
-  /* Estado activo del panel */
-  .mobile-stats-panel.is-active {
+  /* Estado Expandido del Acordeón */
+  .stat-item.show-tooltip .stat-tooltip.glow-glass {
     max-height: 250px;
-    /* Suficiente para el contenido */
-    opacity: 1;
-    padding: 20px;
-    /* Expande el padding vertical */
-    transform: translateY(0);
-    /* Cae a su posición final */
+    opacity: 0.7;
+    /* Texto un poco más tenue para diferenciar del título */
+    margin-top: 8px;
+    /* Pequeño aire respecto al número */
     pointer-events: auto;
-    margin-top: 15px;
-    /* Se separa de los números */
-    margin-bottom: 20px;
+  }
+
+  .stat-tooltip.glow-glass ul {
+    text-align: left;
+    /* Alineado a la izquierda */
+  }
+
+  /* Mantenemos la iluminación blanca para el número seleccionado */
+  .stat-item.show-tooltip h3 {
+    color: #ffffff;
+    text-shadow: 0 0 8px rgba(255, 255, 255, 0.4);
   }
 
   body {
