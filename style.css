@@ -946,9 +946,26 @@ body.cursor-ready .cursor-dot {
     display: none !important;
   }
 
+  .stat-item {
+    transition: all 0.3s ease;
+    opacity: 0.7;
+    /* Los no seleccionados se ven un poco más tenues */
+  }
+
+  .stat-item.selected {
+    opacity: 1;
+    /* El seleccionado brilla en blanco puro */
+    transform: scale(1.05);
+    /* Pequeño realce táctil */
+  }
+
+  .stat-item h3 {
+    color: #ffffff !important;
+    transition: all 0.3s ease;
+  }
+
   /* Estilos para el nuevo panel de expansión móvil */
   .mobile-stats-panel {
-    margin-top: 20px;
     width: 100%;
     /* Reutilizamos la estética glass sutil */
     background: rgba(15, 15, 15, 0.75);
@@ -957,69 +974,39 @@ body.cursor-ready .cursor-dot {
     border: 1px solid rgba(255, 255, 255, 0.08);
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
     border-radius: 12px;
-    padding: 0;
-    /* Sin padding hasta que tenga contenido */
+    padding: 0 20px;
+    /* Padding horizontal fijo, vertical 0 */
 
-    /* Estado inicial: cerrado y oculto */
+    /* Estado inicial: oculto y desplazado hacia arriba */
     max-height: 0;
     opacity: 0;
     overflow: hidden;
-    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    transform: translateY(-15px);
+    /* Arranca un poco más arriba */
+    pointer-events: none;
+    margin-top: 0;
+
+    /* Curva de animación idéntica al 'Ease Out' de Figma de 300ms */
+    transition: max-height 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+      opacity 0.25s cubic-bezier(0.4, 0, 0.2, 1),
+      transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+      padding 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+      margin-top 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
   /* Estado activo del panel */
   .mobile-stats-panel.is-active {
-    max-height: 200px;
-    /* Altura suficiente para el contenido */
+    max-height: 250px;
+    /* Suficiente para el contenido */
     opacity: 1;
     padding: 20px;
+    /* Expande el padding vertical */
+    transform: translateY(0);
+    /* Cae a su posición final */
+    pointer-events: auto;
+    margin-top: 15px;
+    /* Se separa de los números */
     margin-bottom: 20px;
-  }
-
-  /* Estilos para la lista dentro del panel móvil */
-  .mobile-stats-panel ul {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    text-align: center;
-  }
-
-  .mobile-stats-panel li {
-    font-size: 14px;
-    color: rgba(255, 255, 255, 0.95);
-    font-weight: 400;
-  }
-
-  /* Animación de "respiración" sutil en blanco y gris plata */
-  @keyframes monochromePulse {
-    0% {
-      color: #ffffff;
-      text-shadow: 0 0 5px rgba(255, 255, 255, 0);
-    }
-
-    50% {
-      color: rgba(255, 255, 255, 0.6);
-      text-shadow: 0 0 5px rgba(255, 255, 255, 0.2);
-      /* Se apaga un poco y brilla sutilmente */
-    }
-
-    100% {
-      color: #ffffff;
-      text-shadow: 0 0 5px rgba(255, 255, 255, 0);
-    }
-  }
-
-  /* Feedback visual sutil y animado en el ítem seleccionado */
-  .stat-item.selected h3 {
-    /* Aplicamos la nueva animación monocromática */
-    /* 2 segundos, bucle infinito, movimiento suave */
-    animation: monochromePulse 2s infinite ease-in-out;
-
-    /* Aseguramos color base blanco */
-    color: #ffffff;
   }
 
   body {
