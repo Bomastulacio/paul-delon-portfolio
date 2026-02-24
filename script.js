@@ -111,45 +111,38 @@ document.addEventListener('DOMContentLoaded', () => {
         panels.forEach(panel => {
             panel.addEventListener('click', (e) => {
                 if (!isMobile()) return;
+
+                // Evitamos conflictos
                 e.stopPropagation();
                 if (e.target.closest('.panel-cta')) return;
 
-                const wasExpanded = panel.classList.contains('is-expanded');
+                const isAlreadyExpanded = panel.classList.contains('is-expanded');
 
-                // ANCLA: guardamos dónde está el panel ANTES de tocar el DOM
-                const rectBefore = panel.getBoundingClientRect();
+                if (isAlreadyExpanded) {
+                    // Si ya estaba abierto, solo lo cerramos
+                    panel.classList.remove('is-expanded', 'active');
+                    stopGallery(panel);
+                    document.querySelectorAll('[data-accordion]').forEach(acc => acc.classList.remove('has-active'));
+                } else {
+                    // 1. Limpieza global previa (Cerramos todo lo demás)
+                    document.querySelectorAll('.accordion-panel.is-expanded').forEach(p => {
+                        p.classList.remove('is-expanded', 'active');
+                        stopGallery(p);
+                    });
+                    document.querySelectorAll('[data-accordion]').forEach(acc => acc.classList.remove('has-active'));
 
-                // Cerrar todo
-                document.querySelectorAll('.accordion-panel.is-expanded').forEach(p => {
-                    p.classList.remove('is-expanded', 'active');
-                    stopGallery(p);
-                });
-                document.querySelectorAll('.accordion-hero.has-active').forEach(acc => {
-                    acc.classList.remove('has-active');
-                });
-
-                // Abrir el nuevo si no estaba abierto
-                if (!wasExpanded) {
+                    // 2. Activamos el nuevo panel
                     panel.classList.add('is-expanded', 'active');
-                    const acc = panel.closest('[data-accordion]');
-                    if (acc) acc.classList.add('has-active');
+                    const parentAcc = panel.closest('[data-accordion]');
+                    if (parentAcc) parentAcc.classList.add('has-active');
 
-                    const firstImg = panel.querySelector('.gallery-img');
-                    if (firstImg) firstImg.classList.add('active');
+                    // Prendemos la primera imagen y punto
+                    const imgs = panel.querySelectorAll('.gallery-img');
+                    const dots = panel.querySelectorAll('.gallery-dot');
+                    if (imgs.length > 0) imgs[0].classList.add('active');
+                    if (dots.length > 0) dots[0].classList.add('active');
                     startGallery(panel);
                 }
-
-                // CORRECCIÓN DEL SALTO: esperamos un frame para que el browser repinte y medimos la diferencia real
-                requestAnimationFrame(() => {
-                    const rectAfter = panel.getBoundingClientRect();
-                    const diff = rectAfter.top - rectBefore.top;
-                    if (Math.abs(diff) > 1) {
-                        window.scrollBy({
-                            top: diff,
-                            behavior: 'instant'
-                        });
-                    }
-                });
             });
         });
 
