@@ -311,4 +311,24 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // ========================================================
+    // ABOUT STATS TOOLTIPS (Mobile Touch)
+    // ========================================================
+    const statItems = document.querySelectorAll('.stat-item');
+    statItems.forEach(item => {
+        item.addEventListener('click', (e) => {
+            if (window.innerWidth <= 768) {
+                e.stopPropagation();
+                statItems.forEach(other => {
+                    if (other !== item) other.classList.remove('show-tooltip');
+                });
+                item.classList.toggle('show-tooltip');
+            }
+        });
+    });
+
+    document.addEventListener('click', () => {
+        statItems.forEach(item => item.classList.remove('show-tooltip'));
+    });
+
 });
