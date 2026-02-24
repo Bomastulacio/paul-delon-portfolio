@@ -120,52 +120,59 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 const isAlreadyExpanded = panel.classList.contains('is-expanded');
 
-                // 1. ABSOLUTE DOCUMENT-WIDE CLEANUP
-                // This ensures that panels in DIFFERENT sections also close.
-                document.querySelectorAll('.accordion-panel').forEach(p => {
-                    // Close everything else, or close THIS one if it was already expanded
-                    if (p !== panel || isAlreadyExpanded) {
-                        p.classList.remove('is-expanded');
-                        p.classList.remove('active');
-                        stopGallery(p);
-                    }
-                });
-
-                // Clear 'has-active' from ALL accordion containers in the site
-                document.querySelectorAll('[data-accordion]').forEach(acc => {
-                    acc.classList.remove('has-active');
-                });
-
                 if (isAlreadyExpanded) {
-                    // Closed it (already handled in the cleanup loop)
+                    // Si ya estaba expandido, simplemente lo cerramos (Toggle OFF)
+                    panel.classList.remove('is-expanded');
+                    panel.classList.remove('active');
+                    stopGallery(panel);
+
+                    // Limpiamos el estado global de los contenedores
+                    document.querySelectorAll('[data-accordion]').forEach(acc => {
+                        acc.classList.remove('has-active');
+                    });
                     activePanel = null;
                 } else {
-                    // 2. ACTIVATE NEW PANEL
-                    // Reset all gallery states globally just to be safe
+                    // 1. APERTURA PRIORITARIA (Reservar espacio en el DOM)
+                    // Reseteamos estados visuales globales para evitar duplicados visuales
                     document.querySelectorAll('.gallery-img').forEach(img => img.classList.remove('active'));
                     document.querySelectorAll('.gallery-dot').forEach(d => d.classList.remove('active'));
 
-                    // Show first image/dot of this panel
+                    // Activamos imagen/dot del nuevo panel
                     const imgs = panel.querySelectorAll('.gallery-img');
                     const dots = panel.querySelectorAll('.gallery-dot');
                     if (imgs.length > 0) imgs[0].classList.add('active');
                     if (dots.length > 0) dots[0].classList.add('active');
 
-                    // Expand and start
+                    // Expandimos el panel actual
                     panel.classList.add('is-expanded');
                     panel.classList.add('active');
                     accordion.classList.add('has-active');
                     startGallery(panel);
                     activePanel = panel;
 
-                    // --- UX Improvement: Scroll Stabilization ---
-                    // Delayed for 300ms to allow CSS expansion to begin
+                    // 2. CIERRE DE LOS DEMÁS (Limpieza global)
+                    document.querySelectorAll('.accordion-panel').forEach(p => {
+                        if (p !== panel) {
+                            p.classList.remove('is-expanded');
+                            p.classList.remove('active');
+                            stopGallery(p);
+                        }
+                    });
+
+                    // Quitamos 'has-active' de otros acordeones que no contengan el panel activo
+                    document.querySelectorAll('[data-accordion]').forEach(acc => {
+                        if (!acc.contains(panel)) {
+                            acc.classList.remove('has-active');
+                        }
+                    });
+
+                    // 3. ESTABILIZACIÓN DE CÁMARA (50ms)
                     setTimeout(() => {
                         panel.scrollIntoView({
                             behavior: 'smooth',
                             block: 'center'
                         });
-                    }, 300);
+                    }, 50);
                 }
             });
         });
