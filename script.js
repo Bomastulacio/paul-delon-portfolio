@@ -107,21 +107,23 @@ document.addEventListener('DOMContentLoaded', () => {
             panel.appendChild(dotsEl);
         });
 
-        // --- MOBILE: TAP TO TOGGLE (ROBUST) ---
+        // --- MOBILE: TAP TO TOGGLE (ROBUST + TOUCHSTART) ---
         panels.forEach(panel => {
             const handleInteraction = (e) => {
                 if (!isMobile()) return;
 
-                // Stop propagation and prevent default to handle touch cleanly
+                // Stop propagation and prevent default to handle touch cleanly without delay
                 e.stopPropagation();
+                // Avoid secondary click event if touchstart was handled
+                if (e.type === 'touchstart') e.preventDefault();
 
-                // Don't toggle if clicking a CTA link
+                // Don't toggle if clicking a CTA link (cta handles itself)
                 if (e.target.closest('.panel-cta')) return;
 
                 const isAlreadyExpanded = panel.classList.contains('is-expanded');
 
                 // 1. ABSOLUTE GLOBAL CLEANUP
-                // Close EVERY other panel and stop their galleries
+                // Close EVERY other panel and stop their galleries across ALL accordions
                 document.querySelectorAll('.accordion-panel').forEach(p => {
                     if (p !== panel || isAlreadyExpanded) {
                         p.classList.remove('is-expanded');
@@ -130,29 +132,28 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                 });
 
-                // Flush ALL gallery image states globally to prevent conflicts
-                document.querySelectorAll('.gallery-img').forEach(img => img.classList.remove('active'));
-
-                // Clear active state from all accordion containers
+                // Clear 'has-active' from ALL accordion containers
                 document.querySelectorAll('[data-accordion]').forEach(acc => {
                     acc.classList.remove('has-active');
                 });
 
                 if (isAlreadyExpanded) {
-                    // If it was already expanded, we already closed it in the loop above
+                    // Toggled OFF (handled by the cleanup loop above)
                     activePanel = null;
                 } else {
-                    // 2. FORCED INITIALIZATION: Activate first image of THIS panel IMMEDIATELY
+                    // 2. FORCED INITIALIZATION: Activate first image
                     const imgs = panel.querySelectorAll('.gallery-img');
                     const dots = panel.querySelectorAll('.gallery-dot');
                     if (imgs.length > 0) {
+                        document.querySelectorAll('.gallery-img').forEach(img => img.classList.remove('active'));
                         imgs[0].classList.add('active');
                     }
                     if (dots.length > 0) {
+                        document.querySelectorAll('.gallery-dot').forEach(d => d.classList.remove('active'));
                         dots[0].classList.add('active');
                     }
 
-                    // Expand this one and start its gallery
+                    // Expand this one
                     panel.classList.add('is-expanded');
                     panel.classList.add('active');
                     accordion.classList.add('has-active');
@@ -162,7 +163,7 @@ document.addEventListener('DOMContentLoaded', () => {
             };
 
             panel.addEventListener('click', handleInteraction);
-            // Optional: panel.addEventListener('touchstart', handleInteraction, {passive: false});
+            panel.addEventListener('touchstart', handleInteraction, { passive: false });
         });
 
         // --- Desktop: gallery rotation on hover ---

@@ -547,9 +547,11 @@ body.cursor-ready .cursor-dot {
   transition: filter 0.5s, transform 0.5s;
 }
 
-.about-image-wrapper:hover .about-image {
-  filter: grayscale(0%);
-  transform: scale(1.02);
+@media (hover: hover) {
+  .about-image-wrapper:hover .about-image {
+    filter: grayscale(0%);
+    transform: scale(1.02);
+  }
 }
 
 .section-tag-sm {
