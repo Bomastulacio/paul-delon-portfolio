@@ -111,16 +111,15 @@ document.addEventListener('DOMContentLoaded', () => {
         panels.forEach(panel => {
             panel.addEventListener('click', (e) => {
                 if (!isMobile()) return;
-
-                // Stop propagation to prevent document/parent conflicts
                 e.stopPropagation();
-
-                // Don't toggle if clicking a CTA link (cta handles itself)
                 if (e.target.closest('.panel-cta')) return;
 
                 const wasExpanded = panel.classList.contains('is-expanded');
 
-                // 1. APAGAR TODO GLOBALMENTE SIEMPRE
+                // ANCLA: guardamos dónde está el panel ANTES de tocar el DOM
+                const rectBefore = panel.getBoundingClientRect();
+
+                // Cerrar todo
                 document.querySelectorAll('.accordion-panel.is-expanded').forEach(p => {
                     p.classList.remove('is-expanded', 'active');
                     stopGallery(p);
@@ -129,17 +128,28 @@ document.addEventListener('DOMContentLoaded', () => {
                     acc.classList.remove('has-active');
                 });
 
-                // 2. PRENDER EL NUEVO (Si no estaba abierto)
+                // Abrir el nuevo si no estaba abierto
                 if (!wasExpanded) {
                     panel.classList.add('is-expanded', 'active');
                     const acc = panel.closest('[data-accordion]');
                     if (acc) acc.classList.add('has-active');
 
-                    // Forzar la primera imagen
                     const firstImg = panel.querySelector('.gallery-img');
                     if (firstImg) firstImg.classList.add('active');
                     startGallery(panel);
                 }
+
+                // CORRECCIÓN DEL SALTO: esperamos un frame para que el browser repinte y medimos la diferencia real
+                requestAnimationFrame(() => {
+                    const rectAfter = panel.getBoundingClientRect();
+                    const diff = rectAfter.top - rectBefore.top;
+                    if (Math.abs(diff) > 1) {
+                        window.scrollBy({
+                            top: diff,
+                            behavior: 'instant'
+                        });
+                    }
+                });
             });
         });
 
