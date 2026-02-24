@@ -133,46 +133,44 @@ document.addEventListener('DOMContentLoaded', () => {
                     activePanel = null;
                 } else {
                     // 1. APERTURA PRIORITARIA (Reservar espacio en el DOM)
-                    // Reseteamos estados visuales globales para evitar duplicados visuales
                     document.querySelectorAll('.gallery-img').forEach(img => img.classList.remove('active'));
                     document.querySelectorAll('.gallery-dot').forEach(d => d.classList.remove('active'));
 
-                    // Activamos imagen/dot del nuevo panel
                     const imgs = panel.querySelectorAll('.gallery-img');
                     const dots = panel.querySelectorAll('.gallery-dot');
                     if (imgs.length > 0) imgs[0].classList.add('active');
                     if (dots.length > 0) dots[0].classList.add('active');
 
-                    // Expandimos el panel actual
                     panel.classList.add('is-expanded');
                     panel.classList.add('active');
                     accordion.classList.add('has-active');
                     startGallery(panel);
                     activePanel = panel;
 
-                    // 2. CIERRE DE LOS DEMÁS (Limpieza global)
-                    document.querySelectorAll('.accordion-panel').forEach(p => {
-                        if (p !== panel) {
-                            p.classList.remove('is-expanded');
-                            p.classList.remove('active');
-                            stopGallery(p);
-                        }
-                    });
-
-                    // Quitamos 'has-active' de otros acordeones que no contengan el panel activo
-                    document.querySelectorAll('[data-accordion]').forEach(acc => {
-                        if (!acc.contains(panel)) {
-                            acc.classList.remove('has-active');
-                        }
-                    });
-
-                    // 3. ESTABILIZACIÓN DE CÁMARA (50ms)
+                    // 2. ESTABILIZACIÓN DE CÁMARA (Inmediata)
                     setTimeout(() => {
                         panel.scrollIntoView({
                             behavior: 'smooth',
                             block: 'center'
                         });
-                    }, 50);
+                    }, 10);
+
+                    // 3. CIERRE DIFERIDO DE LOS DEMÁS (El truco para evitar el salto)
+                    // Retrasamos el colapso de los paneles superiores 400ms para que la cámara llegue primero al nuevo destino.
+                    setTimeout(() => {
+                        document.querySelectorAll('.accordion-panel').forEach(p => {
+                            if (p !== panel) {
+                                p.classList.remove('is-expanded');
+                                p.classList.remove('active');
+                                stopGallery(p);
+                            }
+                        });
+                        document.querySelectorAll('[data-accordion]').forEach(acc => {
+                            if (!acc.contains(panel)) {
+                                acc.classList.remove('has-active');
+                            }
+                        });
+                    }, 400);
                 }
             });
         });
