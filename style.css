@@ -993,11 +993,33 @@ body.cursor-ready .cursor-dot {
     font-weight: 400;
   }
 
-  /* Feedback visual en el ítem seleccionado */
+  /* Animación de "respiración" sutil en blanco y gris plata */
+  @keyframes monochromePulse {
+    0% {
+      color: #ffffff;
+      text-shadow: 0 0 5px rgba(255, 255, 255, 0);
+    }
+
+    50% {
+      color: rgba(255, 255, 255, 0.6);
+      text-shadow: 0 0 5px rgba(255, 255, 255, 0.2);
+      /* Se apaga un poco y brilla sutilmente */
+    }
+
+    100% {
+      color: #ffffff;
+      text-shadow: 0 0 5px rgba(255, 255, 255, 0);
+    }
+  }
+
+  /* Feedback visual sutil y animado en el ítem seleccionado */
   .stat-item.selected h3 {
-    color: #30d158;
-    /* Color de acento al estar activo */
-    transition: color 0.3s ease;
+    /* Aplicamos la nueva animación monocromática */
+    /* 2 segundos, bucle infinito, movimiento suave */
+    animation: monochromePulse 2s infinite ease-in-out;
+
+    /* Aseguramos color base blanco */
+    color: #ffffff;
   }
 
   body {
