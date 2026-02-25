@@ -288,7 +288,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const form = document.querySelector('.contact-form');
     if (form) {
         form.addEventListener('submit', (e) => {
-            e.preventDefault();
             const inputs = form.querySelectorAll('.form-input[required]');
             let valid = true;
             inputs.forEach(inp => {
@@ -298,15 +297,15 @@ document.addEventListener('DOMContentLoaded', () => {
                     inp.style.borderColor = '#e74c3c'; valid = false;
                 }
             });
-            if (valid) {
+
+            if (!valid) {
+                e.preventDefault();
+            } else {
+                // If valid, the form proceeds to FormSubmit (action URL)
                 const btn = form.querySelector('.form-submit');
-                const txt = btn.textContent;
-                btn.textContent = '¡ENVIADO!';
-                btn.style.background = '#30d158'; btn.disabled = true;
-                setTimeout(() => {
-                    btn.textContent = txt; btn.style.background = ''; btn.disabled = false;
-                    form.reset();
-                }, 2500);
+                btn.textContent = 'ENVIANDO...';
+                btn.style.background = '#30d158';
+                // Note: No reset() or preventDefault() here to allow the real POST
             }
         });
     }
