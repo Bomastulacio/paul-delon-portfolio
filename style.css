@@ -855,6 +855,7 @@ body.cursor-ready .cursor-dot {
 
 .form-submit {
   align-self: flex-start;
+  position: relative;
   padding: 10px 32px;
   border: none;
   border-radius: var(--r-btn);
@@ -866,13 +867,89 @@ body.cursor-ready .cursor-dot {
   color: var(--bg);
   background: var(--text-1);
   cursor: pointer;
-  transition: all 0.35s;
+  transition: all 0.3s ease;
+  min-width: 120px;
+  min-height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .form-submit:hover {
   background: transparent;
   color: var(--text-1);
   box-shadow: inset 0 0 0 1.5px var(--text-1);
+}
+
+/* --- Loading Spinner --- */
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.form-submit .btn-spinner {
+  display: none;
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+
+.form-submit .btn-text {
+  transition: opacity 0.3s ease;
+}
+
+/* Loading State */
+.form-submit.is-loading {
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: transparent;
+  cursor: wait;
+  pointer-events: none;
+}
+
+.form-submit.is-loading .btn-text {
+  opacity: 0;
+  position: absolute;
+}
+
+.form-submit.is-loading .btn-spinner {
+  display: block;
+}
+
+.form-submit.is-loading:hover {
+  background: rgba(255, 255, 255, 0.08);
+  box-shadow: none;
+}
+
+/* Success State */
+.form-submit.is-success {
+  background: rgba(48, 209, 88, 0.15);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  border: 1px solid rgba(48, 209, 88, 0.25);
+  color: #30d158;
+  pointer-events: none;
+}
+
+.form-submit.is-success .btn-spinner {
+  display: none;
+}
+
+.form-submit.is-success .btn-text {
+  opacity: 1;
+  position: static;
+}
+
+.form-submit.is-success:hover {
+  background: rgba(48, 209, 88, 0.15);
+  box-shadow: none;
+  color: #30d158;
 }
 
 

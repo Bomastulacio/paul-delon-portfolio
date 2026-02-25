@@ -287,9 +287,15 @@ document.addEventListener('DOMContentLoaded', () => {
     // ========================================================
     const form = document.querySelector('.contact-form');
     if (form) {
-        form.addEventListener('submit', (e) => {
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
             const inputs = form.querySelectorAll('.form-input[required]');
+            const btn = form.querySelector('.form-submit');
+            const btnText = btn.querySelector('.btn-text');
             let valid = true;
+
+            // Validation
             inputs.forEach(inp => {
                 inp.style.borderColor = '';
                 if (!inp.value.trim()) { inp.style.borderColor = '#e74c3c'; valid = false; }
@@ -298,14 +304,45 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             });
 
-            if (!valid) {
-                e.preventDefault();
-            } else {
-                // If valid, the form proceeds to FormSubmit (action URL)
-                const btn = form.querySelector('.form-submit');
-                btn.textContent = 'ENVIANDO...';
-                btn.style.background = '#30d158';
-                // Note: No reset() or preventDefault() here to allow the real POST
+            if (!valid) return;
+
+            // --- Loading State ---
+            btn.classList.add('is-loading');
+            btn.disabled = true;
+
+            try {
+                const formData = new FormData(form);
+                const res = await fetch('https://formsubmit.co/ajax/bulatom@hotmail.com', {
+                    method: 'POST',
+                    body: formData,
+                    headers: { 'Accept': 'application/json' }
+                });
+
+                // --- Success State ---
+                btn.classList.remove('is-loading');
+                btn.classList.add('is-success');
+                btnText.textContent = '✓ MENSAJE ENVIADO';
+
+                form.reset();
+
+                // Reset button after 3.5s
+                setTimeout(() => {
+                    btn.classList.remove('is-success');
+                    btnText.textContent = 'ENVIAR';
+                    btn.disabled = false;
+                }, 3500);
+
+            } catch (err) {
+                // --- Error State ---
+                btn.classList.remove('is-loading');
+                btnText.textContent = 'ERROR · REINTENTAR';
+                btn.style.borderColor = '#e74c3c';
+                btn.disabled = false;
+
+                setTimeout(() => {
+                    btnText.textContent = 'ENVIAR';
+                    btn.style.borderColor = '';
+                }, 3000);
             }
         });
     }
