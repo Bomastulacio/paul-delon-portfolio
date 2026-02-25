@@ -1038,6 +1038,43 @@ body.cursor-ready .cursor-dot {
     pointer-events: auto;
   }
 
+  /* Grid de 2 columnas para optimizar espacio en celular */
+  .stat-tooltip.glow-glass ul {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px 15px;
+  }
+
+  /* Items que deben ocupar todo el ancho */
+  .stat-main,
+  .stat-tag,
+  .stat-more {
+    grid-column: span 2;
+  }
+
+  .stat-main {
+    font-weight: 700 !important;
+    color: #fff !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding-bottom: 4px;
+    margin-bottom: 2px;
+  }
+
+  .stat-tag {
+    color: rgba(255, 255, 255, 0.5) !important;
+    font-style: italic;
+    font-size: 0.7rem !important;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-top: 4px;
+  }
+
+  .stat-more {
+    font-weight: 600;
+    opacity: 0.5;
+    margin-top: 4px;
+  }
+
   .stat-tooltip.glow-glass ul {
     text-align: left;
     /* Alineado a la izquierda */
